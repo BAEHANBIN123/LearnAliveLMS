@@ -11,15 +11,15 @@ public interface ProfessorMapper {
     @Select("SELECT * FROM professor")
     List<Professor> getAllProfessors();
 
-    @Select("SELECT * FROM professor WHERE prof_id = #{prof_id}")  // prof_id로 수정
-    Professor getProfessorById(@Param("prof_id") String prof_id);  // prof_id로 수정
+    @Select("SELECT * FROM professor WHERE prof_id = #{prof_id}")
+    Professor getProfessorById(@Param("prof_id") String prof_id);
 
-    @Insert("INSERT INTO professor (prof_id, name, department, email) VALUES (#{prof_id}, #{name}, #{department}, #{email)")  // prof_id로 수정
+    @Insert("INSERT INTO professor (prof_id, name, department, email, password) VALUES (#{prof_id}, #{name}, #{department}, #{email}, #{password})")  // 비밀번호 추가
     void insertProfessor(Professor professor);
 
-    @Update("UPDATE professor SET name = #{name}, department = #{department}, email = #{email} WHERE prof_id = #{prof_id}")  // prof_id로 수정
+    @Update("UPDATE professor SET name = #{name}, department = #{department}, email = #{email}, password = #{password} WHERE prof_id = #{prof_id}")  // 비밀번호 추가
     void updateProfessor(Professor professor);
 
-    @Delete("DELETE FROM professor WHERE prof_id = #{prof_id}")  // prof_id로 수정
-    void deleteProfessor(@Param("prof_id") String prof_id);  // prof_id로 수정
+    @Delete("DELETE FROM professor WHERE prof_id = #{prof_id}")
+    void deleteProfessor(@Param("prof_id") String prof_id);
 }

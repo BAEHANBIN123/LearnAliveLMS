@@ -45,6 +45,7 @@ const Header = () => {
           )}
 
           <button className="logout-btn" onClick={handleLogout}>로그아웃</button>
+          <button className="mypage-btn" onClick={() => navigate("/mypage")}>마이페이지</button>
         </div>
       ) : (
         <form onSubmit={handleLogin}>

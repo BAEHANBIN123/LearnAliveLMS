@@ -47,9 +47,17 @@ public class ProfessorController {
         if (!isAdmin(token)) {
             return ResponseEntity.status(403).body(Map.of("success", false, "message", "관리자만 수정할 수 있습니다."));
         }
+
+        // 비밀번호가 있을 경우 처리
+        if (updatedProfessor.getPassword() != null && !updatedProfessor.getPassword().isEmpty()) {
+            // 비밀번호 암호화 처리 (필요시)
+            // 예: updatedProfessor.setPassword(encryptPassword(updatedProfessor.getPassword()));
+        }
+
         professorService.updateProfessor(updatedProfessor);
         return ResponseEntity.ok(Map.of("success", true, "message", "교수 정보 업데이트 성공"));
     }
+
 
     // ✅ 교수 삭제 (관리자만 가능)
     @DeleteMapping("/{prof_id}")

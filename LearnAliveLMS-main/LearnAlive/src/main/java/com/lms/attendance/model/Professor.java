@@ -13,4 +13,5 @@ public class Professor {
     private String name;        // 교수 이름
     private String department;  // 교수 소속 학과
     private String email;
+    private String password;
 }
