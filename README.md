@@ -34,8 +34,8 @@ LearnAliveLMS는 역할별 권한 부여, 공지사항 관리, 교수자 관리 
 
 ### 📝 공지사항 생성
 공지사항 관리 페이지에서 새로운 공지사항을 생성할 수 있습니다. 생성된 공지사항은 메인 화면에 즉시 반영됩니다.
+![교수자 생성](https://github.com/user-attachments/assets/08f0dfde-0b08-4e40-8551-cd58b673cff0)
 
-![공지사항 생성](https://github.com/user-attachments/assets/4ce28336-da10-4ee3-8d9e-b490759a388ec)
 
 ### 🛠 공지사항 수정
 공지사항을 수정하고 `수정` 버튼 클릭 시 변경 사항이 반영됩니다.
@@ -44,15 +44,15 @@ LearnAliveLMS는 역할별 권한 부여, 공지사항 관리, 교수자 관리 
 
 ### 🗑 공지사항 삭제
 공지사항을 선택 후 `삭제` 버튼 클릭 시 해당 공지사항이 삭제됩니다.
+![공지사항 삭제](https://github.com/user-attachments/assets/7b879266-ac91-4b4e-ad63-1523d3ce5bc3)
 
-![공지사항 삭제](https://github.com/user-attachments/assets/b37141d9-c03e-47f5-bfba-3b61d9a3b50bd)
 
 ## 👨‍🏫 교수자 관리
 
 ### 교수자 추가
 - 교수자 정보를 입력 후 `생성` 버튼을 클릭하면 교수자가 추가됩니다.
+![교수자 생성](https://github.com/user-attachments/assets/4024452a-38cc-4c63-ba45-f5252efc2d10)
 
-![교수자 생성](https://github.com/user-attachments/assets/0fa07b91-5624-41a4-41f9-9b6e9-deacb16d0dfb)
 
 ### 교수자 정보 수정
 - 선택한 교수자의 정보를 수정하고 `수정` 버튼을 클릭하면 정보가 업데이트됩니다.
@@ -79,40 +79,7 @@ LearnAliveLMS는 역할별 권한 부여, 공지사항 관리, 교수자 관리 
   - 공지사항 생성, 수정, 삭제 기능 (Front-End, Back-End, Database)
 - **회원 정보 찾기**: BCrypt를 활용한 아이디 및 비밀번호 찾기 기능 (구현 중)
 
-## 📂 프로젝트 실행 방법
-
-### 🖥️ 프론트엔드 실행 방법 (React)
-```sh
-cd frontend
-npm install
-npm run dev
-```
-
-### 🛠 백엔드 실행 방법 (Spring Boot)
-```sh
-cd backend
-./mvnw spring-boot:run
-```
-
-### 🗄️ 데이터베이스 설정 (MySQL)
-1. MySQL을 설치 후 실행합니다.
-2. `schema.sql`과 `data.sql`을 실행하여 초기 데이터베이스를 설정합니다.
-3. `application.properties`에서 MySQL 설정 정보를 환경에 맞게 수정합니다.
-
-```sql
-CREATE DATABASE learnalive_lms;
-USE learnalive_lms;
-
--- 예제 테이블 생성 쿼리
-CREATE TABLE professor (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50),
-    email VARCHAR(100) UNIQUE,
-    password VARCHAR(255)
-);
-```
 
 ## 📌 기타
-- **문의사항**: [이슈 게시판](https://github.com/your-repo/issues) 활용
 - **팀원 역할 분배**: 관리자, 교수자, 학생별 역할 구분 및 기능 개발
 - **프로젝트 일정**: 지속 업데이트 예정
