@@ -21,4 +21,5 @@ public class User {
     private String name;
     private String role;
     private String password; // 교수자만 사용 (학생, 관리자는 NULL)
+    private String phone;
 }

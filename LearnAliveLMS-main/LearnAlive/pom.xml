@@ -80,6 +80,18 @@
 			<scope>test</scope>
 		</dependency>
 		
+		<!-- Spring Security Core 추가 -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>6.2.2</version> <!-- 현재 사용 중인 Spring Boot 버전과 맞는 버전 사용 -->
+		</dependency>
+		
+		<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-crypto</artifactId>
+    <version>6.2.2</version>
+</dependency>
 
 
 	<dependency>

@@ -133,7 +133,7 @@ export const AuthProvider = ({ children }) => {
   console.log("📌 AuthProvider가 제공하는 값:", { user, login, logout });
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );

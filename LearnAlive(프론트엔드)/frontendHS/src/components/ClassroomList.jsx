@@ -136,8 +136,12 @@ const ClassroomList = () => {
   const [showStudentModal, setShowStudentModal] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      fetchClassrooms(user.userId).then(setClassrooms);
+    console.log("Current user:", user); // user 상태 출력
+    if (user && user.userId) {
+      fetchClassrooms(user.userId).then((data) => {
+        console.log("Fetched classrooms:", data);
+        setClassrooms(data);
+      });
     }
   }, [user]);
 

@@ -69,6 +69,36 @@ public class ProfessorController {
         professorService.deleteProfessor(prof_id);
         return ResponseEntity.ok(Map.of("success", true, "message", "교수 삭제 완료"));
     }
+    
+ // ✅ ID 찾기
+    @PostMapping("/find-id")
+    public ResponseEntity<?> findProfessorId(@RequestBody Map<String, String> request) {
+        String name = request.get("name");
+        String email = request.get("email");
+
+        Professor professor = professorService.findByNameAndEmail(name, email);
+        if (professor == null) {
+            return ResponseEntity.status(404).body(Map.of("success", false, "message", "해당 정보와 일치하는 ID가 없습니다."));
+        }
+
+        return ResponseEntity.ok(Map.of("success", true, "userId", professor.getProf_id()));
+    }
+
+    // ✅ 비밀번호 찾기
+    @PostMapping("/find-password")
+    public ResponseEntity<?> findProfessorPassword(@RequestBody Map<String, String> request) {
+        String userId = request.get("userId");
+        String name = request.get("name");
+        String phone = request.get("phone");
+
+        Professor professor = professorService.findByIdAndNameAndPhone(userId, name, phone);
+        if (professor == null) {
+            return ResponseEntity.status(404).body(Map.of("success", false, "message", "일치하는 정보를 찾을 수 없습니다."));
+        }
+
+        return ResponseEntity.ok(Map.of("success", true, "password", professor.getPassword()));
+    }
+
 
     // JWT 토큰에서 역할 추출하는 메서드 (임시 구현)
     private boolean isAdmin(String token) {
