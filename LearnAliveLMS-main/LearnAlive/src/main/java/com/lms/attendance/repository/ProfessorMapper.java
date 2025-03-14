@@ -14,12 +14,12 @@ public interface ProfessorMapper {
     @Select("SELECT * FROM professor WHERE prof_id = #{prof_id}")
     Professor getProfessorById(@Param("prof_id") String prof_id);
 
-    @Insert("INSERT INTO professor (prof_id, name, department, email, password, phone) " +
-            "VALUES (#{prof_id}, #{name}, #{department}, #{email}, #{password}, #{phone})")
+    @Insert("INSERT INTO professor (prof_id, name, department, email, password, phone, university) " +
+            "VALUES (#{prof_id}, #{name}, #{department}, #{email}, #{password}, #{phone}, #{university})")
     void insertProfessor(Professor professor);
 
     @Update("UPDATE professor " +
-            "SET name = #{name}, department = #{department}, email = #{email}, password = #{password}, phone = #{phone} " +
+            "SET name = #{name}, department = #{department}, email = #{email}, password = #{password}, phone = #{phone}, university = #{university}" +
             "WHERE prof_id = #{prof_id}")
     void updateProfessor(Professor professor);
 

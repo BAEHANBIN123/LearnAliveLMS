@@ -172,6 +172,8 @@ const CreateProfessor = ({ professor, onClose, onProfessorAdded, onProfessorUpda
   const [email, setEmail] = useState("");
   const [profId, setProfId] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
+  const [phone, setPhone] = useState(""); // ✅ 전화번호 추가
+  const [university, setUniversity] = useState(""); // ✅ 소속 대학 추가
 
   useEffect(() => {
     if (professor) {
@@ -179,12 +181,16 @@ const CreateProfessor = ({ professor, onClose, onProfessorAdded, onProfessorUpda
       setName(professor.name);
       setDepartment(professor.department);
       setEmail(professor.email);
+      setPhone(professor.phone || ""); // ✅ 기존 정보 불러오기
+      setUniversity(professor.university || ""); // ✅ 기존 정보 불러오기
       setCurrentPassword(professor.password || "");
     } else {
       setProfId("");
       setName("");
       setDepartment("");
       setEmail("");
+      setPhone(""); // ✅ 초기화
+      setUniversity(""); // ✅ 초기화
       setCurrentPassword("");
     }
   }, [professor]);
@@ -197,6 +203,8 @@ const CreateProfessor = ({ professor, onClose, onProfessorAdded, onProfessorUpda
       department,
       email,
       password: currentPassword,
+      phone, // ✅ 추가
+      university, // ✅ 추가
     };
 
     try {
@@ -211,7 +219,7 @@ const CreateProfessor = ({ professor, onClose, onProfessorAdded, onProfessorUpda
           professorData,
           { headers }
         );
-        onProfessorUpdated(response.data); // 수정된 교수 데이터를 부모 컴포넌트로 전달
+        onProfessorUpdated(response.data);
       } else {
         // 새로운 교수 정보를 추가하는 경우
         response = await axios.post(
@@ -219,7 +227,7 @@ const CreateProfessor = ({ professor, onClose, onProfessorAdded, onProfessorUpda
           professorData,
           { headers }
         );
-        onProfessorAdded(response.data); // 새 교수 데이터를 부모 컴포넌트로 전달
+        onProfessorAdded(response.data);
       }
 
       onClose();
@@ -238,7 +246,7 @@ const CreateProfessor = ({ professor, onClose, onProfessorAdded, onProfessorUpda
           id="profId"
           value={profId}
           onChange={(e) => setProfId(e.target.value)}
-          disabled={!!professor} // 수정 시 ID 수정 불가
+          disabled={!!professor}
         />
       </div>
       <div className="form-group">
@@ -271,6 +279,28 @@ const CreateProfessor = ({ professor, onClose, onProfessorAdded, onProfessorUpda
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="phone">전화번호</label> {/* ✅ 전화번호 입력 필드 추가 */}
+        <input
+          type="text"
+          className="form-control"
+          id="phone"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="university">소속 대학</label> {/* ✅ 소속 대학 입력 필드 추가 */}
+        <input
+          type="text"
+          className="form-control"
+          id="university"
+          value={university}
+          onChange={(e) => setUniversity(e.target.value)}
           required
         />
       </div>

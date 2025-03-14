@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios"; // axios 추가
 
 const FindAccountModal = ({ onClose }) => {
   const [name, setName] = useState("");
@@ -14,14 +15,13 @@ const FindAccountModal = ({ onClose }) => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:5000/api/find-id", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email }),
+      const response = await axios.post("http://localhost:8080/api/professors/find-id", {
+        name,
+        email,
       });
-      const data = await response.json();
-      if (data.success) {
-        setUserId(data.userId);
+      const { success, userId } = response.data;
+      if (success) {
+        setUserId(userId);
       } else {
         alert("해당 정보로 아이디를 찾을 수 없습니다.");
       }
@@ -36,14 +36,14 @@ const FindAccountModal = ({ onClose }) => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:5000/api/find-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: idInput, name, phone }),
+      const response = await axios.post("http://localhost:8080/api/professors/find-password", {
+        userId: idInput,
+        name,
+        phone,
       });
-      const data = await response.json();
-      if (data.success) {
-        setFoundPassword(data.password);
+      const { success, password } = response.data;
+      if (success) {
+        setFoundPassword(password);
       } else {
         alert("해당 정보로 비밀번호를 찾을 수 없습니다.");
       }
@@ -128,32 +128,33 @@ const styles = {
   },
   modalContent: {
     backgroundColor: "#fff",
-    padding: "20px",
+    padding: "15px",
     borderRadius: "8px",
-    width: "400px",
+    width: "320px",
     textAlign: "center",
+    position: "relative",
   },
   closeButton: {
     position: "absolute",
-    top: "10px",
-    right: "10px",
+    top: "5px",
+    right: "5px",
     background: "none",
     border: "none",
-    fontSize: "18px",
+    fontSize: "16px",
     cursor: "pointer",
   },
   section: {
-    marginBottom: "15px",
+    marginBottom: "12px",
   },
   input: {
     width: "100%",
-    padding: "8px",
-    margin: "5px 0",
+    padding: "6px",
+    margin: "4px 0",
   },
   button: {
     width: "100%",
-    padding: "10px",
-    marginTop: "10px",
+    padding: "8px",
+    marginTop: "8px",
     backgroundColor: "#007bff",
     color: "#fff",
     border: "none",

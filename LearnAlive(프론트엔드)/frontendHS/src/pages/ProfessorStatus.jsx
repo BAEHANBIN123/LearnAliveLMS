@@ -211,25 +211,25 @@ const ProfessorStatus = () => {
     if (!user) {
       navigate("/login");
     } else if (user.role === "ADMIN") {
-      const fetchProfessors = async () => {
-        try {
-          const response = await axios.get("http://localhost:8080/api/professors", {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          });
-          setProfessors(response.data);
-          setIsLoggedIn(true);
-          setUsername(user.username);
-          setRole(user.role);
-        } catch (error) {
-          console.error("교수 목록을 불러오는 데 실패했습니다.", error);
-        }
-      };
-
       fetchProfessors();
+      setIsLoggedIn(true);
+      setUsername(user.username);
+      setRole(user.role);
     }
   }, [user, navigate]);
+
+  const fetchProfessors = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/professors", {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      setProfessors(response.data);
+    } catch (error) {
+      console.error("교수 목록을 불러오는 데 실패했습니다.", error);
+    }
+  };
 
   const handleCreateProfessorClick = () => {
     setEditingProfessor(null);
@@ -278,26 +278,11 @@ const ProfessorStatus = () => {
     );
   };
 
-  // 교수자 목록 상태를 불러오는 useEffect가 의존성 배열에 'professors'를 추가하여
-  // 교수자 목록이 새로 추가되거나 수정된 경우에 해당 상태가 업데이트되도록 합니다.
   useEffect(() => {
     if (user && user.role === "ADMIN") {
-      const fetchProfessors = async () => {
-        try {
-          const response = await axios.get("http://localhost:8080/api/professors", {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          });
-          setProfessors(response.data);
-        } catch (error) {
-          console.error("교수 목록을 불러오는 데 실패했습니다.", error);
-        }
-      };
-
       fetchProfessors();
     }
-  }, [user, professors]); // professors가 변경될 때마다 리스트를 새로고침
+  }, [user, professors]);
 
   if (!user || user.role !== "ADMIN") {
     return <p>관리자 권한이 필요합니다. <a href="/login">로그인 페이지로 가기</a></p>;
@@ -319,6 +304,8 @@ const ProfessorStatus = () => {
                 <th>이름</th>
                 <th>학과</th>
                 <th>이메일</th>
+                <th>전화번호</th> {/* ✅ 전화번호 추가 */}
+                <th>소속 대학</th> {/* ✅ 소속 대학 추가 */}
                 <th>수정</th>
                 <th>삭제</th>
               </tr>
@@ -330,6 +317,8 @@ const ProfessorStatus = () => {
                   <td>{professor.name}</td>
                   <td>{professor.department}</td>
                   <td>{professor.email}</td>
+                  <td>{professor.phone}</td> {/* ✅ 전화번호 출력 */}
+                  <td>{professor.university}</td> {/* ✅ 소속 대학 출력 */}
                   <td>
                     <button
                       className="btn btn-warning"

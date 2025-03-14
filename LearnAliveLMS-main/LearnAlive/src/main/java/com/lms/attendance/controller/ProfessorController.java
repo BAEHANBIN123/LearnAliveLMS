@@ -4,6 +4,7 @@ import com.lms.attendance.model.Professor;
 import com.lms.attendance.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Map;
 public class ProfessorController {
 
     private final ProfessorService professorService;
+    private final BCryptPasswordEncoder passwordEncoder;  // BCryptPasswordEncoder 추가
 
     // ✅ 모든 교수 조회 (관리자만 가능)
     @GetMapping
@@ -51,13 +53,12 @@ public class ProfessorController {
         // 비밀번호가 있을 경우 처리
         if (updatedProfessor.getPassword() != null && !updatedProfessor.getPassword().isEmpty()) {
             // 비밀번호 암호화 처리 (필요시)
-            // 예: updatedProfessor.setPassword(encryptPassword(updatedProfessor.getPassword()));
+            updatedProfessor.setPassword(passwordEncoder.encode(updatedProfessor.getPassword()));  // 비밀번호 암호화
         }
 
         professorService.updateProfessor(updatedProfessor);
         return ResponseEntity.ok(Map.of("success", true, "message", "교수 정보 업데이트 성공"));
     }
-
 
     // ✅ 교수 삭제 (관리자만 가능)
     @DeleteMapping("/{prof_id}")
@@ -70,7 +71,7 @@ public class ProfessorController {
         return ResponseEntity.ok(Map.of("success", true, "message", "교수 삭제 완료"));
     }
     
- // ✅ ID 찾기
+    // ✅ ID 찾기
     @PostMapping("/find-id")
     public ResponseEntity<?> findProfessorId(@RequestBody Map<String, String> request) {
         String name = request.get("name");
@@ -96,9 +97,15 @@ public class ProfessorController {
             return ResponseEntity.status(404).body(Map.of("success", false, "message", "일치하는 정보를 찾을 수 없습니다."));
         }
 
-        return ResponseEntity.ok(Map.of("success", true, "password", professor.getPassword()));
-    }
+        // 제출된 평문 비밀번호와 데이터베이스에 저장된 암호화된 비밀번호를 비교
+        boolean isPasswordMatch = passwordEncoder.matches(request.get("password"), professor.getPassword());
+        if (!isPasswordMatch) {
+            return ResponseEntity.status(401).body(Map.of("success", false, "message", "잘못된 비밀번호입니다."));
+        }
 
+        // 비밀번호가 일치하는 경우, 비밀번호 재설정 요청 등을 처리할 수 있습니다.
+        return ResponseEntity.ok(Map.of("success", true, "message", "비밀번호가 확인되었습니다."));
+    }
 
     // JWT 토큰에서 역할 추출하는 메서드 (임시 구현)
     private boolean isAdmin(String token) {

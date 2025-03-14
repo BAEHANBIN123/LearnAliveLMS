@@ -109,8 +109,8 @@ const ManageNotice = () => {
             <h3>{notice.title}</h3>
             <p>{notice.content}</p>
             <div style={styles.noticeButtons}>
-              <button style={styles.deleteButton} onClick={() => handleDelete(notice.notice_id)}>삭제</button>
               <button style={styles.selectButton} onClick={() => handleSelectNotice(notice)}>수정</button>
+              <button style={styles.deleteButton} onClick={() => handleDelete(notice.notice_id)}>삭제</button>
             </div>
           </li>
         ))}
@@ -201,7 +201,7 @@ const styles = {
       gap: "5px",
       marginTop: "10px",
     },
-    deleteButton: {
+    selectButton: {
       padding: "5px 10px",
       backgroundColor: "#4CAF50",
       color: "#333",
@@ -209,7 +209,7 @@ const styles = {
       borderRadius: "5px",
       cursor: "pointer",
     },
-    selectButton: {
+    deleteButton: {
       padding: "5px 10px",
       backgroundColor: "#4CAF50",
       color: "#333",
