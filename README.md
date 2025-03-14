@@ -34,7 +34,8 @@ LearnAliveLMS는 역할별 권한 부여, 공지사항 관리, 교수자 관리 
 
 ### 📝 공지사항 생성
 공지사항 관리 페이지에서 새로운 공지사항을 생성할 수 있습니다. 생성된 공지사항은 메인 화면에 즉시 반영됩니다.
-![교수자 생성](https://github.com/user-attachments/assets/08f0dfde-0b08-4e40-8551-cd58b673cff0)
+
+![공지사항 생성](https://github.com/user-attachments/assets/c6c85066-13ce-4641-9432-b7829a2a6cea)
 
 
 ### 🛠 공지사항 수정
