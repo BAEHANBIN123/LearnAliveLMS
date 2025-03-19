@@ -156,16 +156,36 @@ const ClassroomList = () => {
     );
   }
 
+  // const handleAddClassroom = async (className) => {
+  //   try {
+  //     await addClassroom({ className, profId: user.userId });
+  //     const updatedClassrooms = await fetchClassrooms(user.userId);
+  //     setClassrooms(updatedClassrooms);
+  //     setShowClassroomModal(false);
+  //   } catch (error) {
+  //     console.error("강의실 추가 실패:", error);
+  //   }
+  // };
+
   const handleAddClassroom = async (className) => {
     try {
-      await addClassroom({ className, profId: user.userId });
-      const updatedClassrooms = await fetchClassrooms(user.userId);
+      console.log("📌 현재 로그인된 유저:", user);
+      const profId = user?.userId;
+      if (!profId) {
+        console.error("❌ 교수 ID가 없음");
+        return;
+      }
+  
+      console.log("📌 강의실 추가 요청:", { className, profId });
+      await addClassroom({ className, profId });
+      const updatedClassrooms = await fetchClassrooms(profId);
       setClassrooms(updatedClassrooms);
       setShowClassroomModal(false);
     } catch (error) {
       console.error("강의실 추가 실패:", error);
     }
   };
+  
 
   const handleDeleteClassroom = async (classId) => {
     const confirmDelete = window.confirm("정말로 삭제하시겠습니까?");

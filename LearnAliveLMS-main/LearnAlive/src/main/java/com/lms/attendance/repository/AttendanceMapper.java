@@ -150,4 +150,59 @@ public interface AttendanceMapper {
     	    @Param("classId") int classId, 
     	    @Param("date") String date
     	);
+    
+    
+    
+    
+    
+    
+    
+   //명식이꺼
+ // 본인의 출결 내역 확인
+    @Select("""
+    	    SELECT 
+    	        s.student_id AS student_id, 
+    	        s.name AS name, 
+    	        s.university AS university, 
+    	        s.department AS department,
+    	        c.class_id AS classId,
+    	        c.class_name AS className, 
+    	        COALESCE(a.state, 'absent') AS state, 
+    	        COALESCE(a.reason, '미등록') AS reason,
+    	        COALESCE(a.date, #{date}) AS date
+    	    FROM Student s
+    	    JOIN Class c 
+    	        ON s.class_id = c.class_id
+    	    LEFT JOIN Attendance a 
+    	        ON s.student_id = a.student_id 
+    	        AND a.class_id = c.class_id 
+    	        AND a.date = #{date}
+    	    WHERE s.student_id = #{studentId}
+    	""")
+    	@Results(id = "StudentAttendanceResultMap", value = {
+    	    @Result(column = "student_id", property = "studentId"),
+    	    @Result(column = "name", property = "name"),
+    	    @Result(column = "university", property = "university"),
+    	    @Result(column = "department", property = "department"),
+    	    @Result(column = "classId", property = "classId"),
+    	    @Result(column = "className", property = "className"),
+    	    @Result(column = "state", property = "state"),
+    	    @Result(column = "reason", property = "reason"),
+    	    @Result(column = "date", property = "date")
+    	})
+    	List<Attendance> findAttendanceByStudent(@Param("studentId") int studentId, @Param("date") String date);
+    // 학생의 해당 월(YYYY-MM)에 대한 출석 기록 조회
+    @Select("SELECT attendance_id, student_id, class_id, date, state, reason, created_at, updated_at " +
+            "FROM Attendance " +
+            "WHERE student_id = #{studentId} " +
+            "AND date LIKE CONCAT(#{month}, '%')")
+    List<Attendance> findAttendanceByStudentForMonth(@Param("studentId") int studentId, @Param("month") String month);
+    
+    // 지난 출석 데이터 조회 (student_id가 일치하고, date가 endDate보다 작은 데이터)
+    @Select("SELECT attendance_id, student_id, class_id, date, state, reason, created_at, updated_at " +
+            "FROM Attendance " +
+            "WHERE student_id = #{studentId} " +
+            "AND date < #{endDate} " +
+            "ORDER BY date DESC")
+    List<Attendance> findPastAttendanceByStudent(@Param("studentId") int studentId, @Param("endDate") String endDate);
 }

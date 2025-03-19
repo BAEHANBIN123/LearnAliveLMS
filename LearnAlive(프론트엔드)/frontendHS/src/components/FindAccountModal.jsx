@@ -1,17 +1,20 @@
 import { useState } from "react";
-import axios from "axios"; // axios 추가
+import axios from "axios";
 
 const FindAccountModal = ({ onClose }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [userId, setUserId] = useState("");
   const [phone, setPhone] = useState("");
-  const [foundPassword, setFoundPassword] = useState("");
   const [idInput, setIdInput] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [resetMessage, setResetMessage] = useState("");
+  const [findIdMessage, setFindIdMessage] = useState("");
 
+  // 아이디 찾기 기능 수정: 실패 시 모달 내에 메시지 출력
   const handleFindId = async () => {
     if (!name || !email) {
-      alert("이름과 이메일을 입력하세요.");
+      setFindIdMessage("이름과 이메일을 입력하세요.");
       return;
     }
     try {
@@ -22,33 +25,42 @@ const FindAccountModal = ({ onClose }) => {
       const { success, userId } = response.data;
       if (success) {
         setUserId(userId);
+        setFindIdMessage(""); // 성공 시 메시지 초기화
       } else {
-        alert("해당 정보로 아이디를 찾을 수 없습니다.");
+        setFindIdMessage("일치하는 ID가 없습니다, 올바른 정보를 입력해주세요.");
       }
     } catch (error) {
-      console.error("아이디 찾기 오류:", error);
+      if (error.response && error.response.status === 404) {
+        setFindIdMessage("일치하는 ID가 없습니다, 올바른 정보를 입력해주세요.");
+      } else {
+        setFindIdMessage("아이디 찾기 중 오류가 발생했습니다.");
+      }
+      // console.error 호출 제거해서 콘솔에 에러가 출력되지 않도록 함.
     }
   };
+  
 
-  const handleFindPassword = async () => {
-    if (!idInput || !name || !phone) {
-      alert("아이디, 이름, 전화번호를 입력하세요.");
+  // 비밀번호 재설정 기능
+  const handleResetPassword = async () => {
+    if (!idInput || !name || !phone || !newPassword) {
+      alert("아이디, 이름, 전화번호와 새 비밀번호를 입력하세요.");
       return;
     }
     try {
-      const response = await axios.post("http://localhost:8080/api/professors/find-password", {
+      const response = await axios.post("http://localhost:8080/api/professors/reset-password", {
         userId: idInput,
         name,
         phone,
+        newPassword,
       });
-      const { success, password } = response.data;
+      const { success } = response.data;
       if (success) {
-        setFoundPassword(password);
+        setResetMessage("비밀번호가 성공적으로 재설정되었습니다.");
       } else {
-        alert("해당 정보로 비밀번호를 찾을 수 없습니다.");
+        alert("해당 정보로 비밀번호 재설정에 실패했습니다.");
       }
     } catch (error) {
-      console.error("비밀번호 찾기 오류:", error);
+      console.error("비밀번호 재설정 오류:", error);
     }
   };
 
@@ -58,7 +70,7 @@ const FindAccountModal = ({ onClose }) => {
         <button onClick={onClose} style={styles.closeButton}>✖</button>
         <h2>회원정보 찾기</h2>
 
-        {/* 아이디 찾기 */}
+        {/* 아이디 찾기 섹션 */}
         <div style={styles.section}>
           <h3>아이디 찾기</h3>
           <input
@@ -77,11 +89,13 @@ const FindAccountModal = ({ onClose }) => {
           />
           <button onClick={handleFindId} style={styles.button}>아이디 찾기</button>
           {userId && <p>찾은 아이디: <strong>{userId}</strong></p>}
+          {/* 아이디가 없고, 오류 메시지가 있을 경우 표시 */}
+          {!userId && findIdMessage && <p style={{ color: "red" }}>{findIdMessage}</p>}
         </div>
 
-        {/* 비밀번호 찾기 */}
+        {/* 비밀번호 재설정 섹션 */}
         <div style={styles.section}>
-          <h3>비밀번호 찾기</h3>
+          <h3>비밀번호 재설정</h3>
           <input
             type="text"
             placeholder="아이디"
@@ -103,8 +117,15 @@ const FindAccountModal = ({ onClose }) => {
             onChange={(e) => setPhone(e.target.value)}
             style={styles.input}
           />
-          <button onClick={handleFindPassword} style={styles.button}>비밀번호 찾기</button>
-          {foundPassword && <p>찾은 비밀번호: <strong>{foundPassword}</strong></p>}
+          <input
+            type="password"
+            placeholder="새 비밀번호"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            style={styles.input}
+          />
+          <button onClick={handleResetPassword} style={styles.button}>비밀번호 재설정</button>
+          {resetMessage && <p>{resetMessage}</p>}
         </div>
       </div>
     </div>
@@ -113,7 +134,6 @@ const FindAccountModal = ({ onClose }) => {
 
 export default FindAccountModal;
 
-// 스타일 추가 (모달 스타일)
 const styles = {
   modalOverlay: {
     position: "fixed",

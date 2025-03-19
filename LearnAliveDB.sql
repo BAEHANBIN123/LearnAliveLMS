@@ -4,6 +4,31 @@
 -- ------------------------------------------------------
 -- Server version	8.0.35
 
+-- Use LearnAliveDB;
+
+-- 관리자 공지사항 관리 테이블
+DROP TABLE IF EXISTS `notice`;
+CREATE TABLE notice (
+    notice_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+SELECT * FROM notice;
+
+-- Admin 테이블
+DROP TABLE IF EXISTS `admin`;
+CREATE TABLE admin (
+    id INT AUTO_INCREMENT PRIMARY KEY,          -- 관리자 고유 ID
+    admin_id VARCHAR(50) NOT NULL UNIQUE,        -- 관리자 아이디
+    password VARCHAR(255) NOT NULL,             -- 관리자 비밀번호 (암호화해서 저장하는 것이 좋음)
+    name VARCHAR(100),                          -- 관리자 이름
+    email VARCHAR(100)
+);
+INSERT INTO admin (admin_id, password,name,email)
+VALUES ('admin', '1234','관리자','admin@naver.com');
+SELECT*FROM Admin;
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -69,7 +94,7 @@ CREATE TABLE `Class` (
   CONSTRAINT `Class_ibfk_1` FOREIGN KEY (`prof_id`) REFERENCES `Professor` (`prof_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
+SELECT * FROM Class;
 --
 -- Table structure for table `Post`
 --
@@ -98,6 +123,24 @@ CREATE TABLE `Post` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+
+DELIMITER //
+CREATE TRIGGER after_class_insert
+AFTER INSERT ON Class
+FOR EACH ROW
+BEGIN
+    INSERT INTO board (class_id, board_name, is_default)
+    VALUES (NEW.class_id, '공지사항', 0);
+    INSERT INTO board (class_id, board_name, is_default)
+    VALUES (NEW.class_id, '학습자료실', 0);
+END //
+DELIMITER ;
+DROP TRIGGER IF EXISTS after_class_insert;
+
+
+
+
+
 -- Table structure for table `Professor`
 --
 
@@ -110,10 +153,14 @@ CREATE TABLE `Professor` (
   `department` varchar(100) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `password` varchar(255) NOT NULL DEFAULT '1234',
+  `phone` VARCHAR(100),
+  `university` VARCHAR(100),
   PRIMARY KEY (`prof_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
+INSERT INTO Professor (prof_id,password,name,department,email,phone,university)
+VALUES ('20250001','1234','이응수','풀스텍학과','abcd@naver.com','01012345678','풀스텍대학');
+SELECT*FROM Professor;
 --
 -- Table structure for table `Student`
 --
@@ -127,16 +174,18 @@ CREATE TABLE `Student` (
   `department` varchar(100) DEFAULT NULL,
   `name` varchar(100) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
+  `password` varchar(255) NOT NULL DEFAULT '1234',
   `remarks` varchar(100) DEFAULT NULL,
   `class_id` int NOT NULL,
   `id` int NOT NULL AUTO_INCREMENT,
+  `phone` VARCHAR(100),
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_student_class` (`student_id`,`class_id`),
   KEY `class_id` (`class_id`),
   CONSTRAINT `Student_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `Class` (`class_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=519 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
+SELECT * FROM student;
 --
 -- Table structure for table `board`
 --
@@ -154,6 +203,25 @@ CREATE TABLE `board` (
   CONSTRAINT `fk_board_class` FOREIGN KEY (`class_id`) REFERENCES `Class` (`class_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+-- 기존 트리거 삭제
+DROP TRIGGER IF EXISTS after_class_insert;
+
+-- 새 트리거
+DELIMITER //
+CREATE TRIGGER after_class_insert
+AFTER INSERT ON Class
+FOR EACH ROW
+BEGIN
+    -- "공지사항" 기본 게시판 추가 (board_type 제외)
+    INSERT INTO board (class_id, board_name, is_default)
+    VALUES (NEW.class_id, '공지사항', 0);
+
+    -- "학습자료실" 기본 게시판 추가 (board_type 제외)
+    INSERT INTO board (class_id, board_name, is_default)
+    VALUES (NEW.class_id, '학습자료실', 0);
+END //
+DELIMITER ;
 
 --
 -- Table structure for table `survey_board`

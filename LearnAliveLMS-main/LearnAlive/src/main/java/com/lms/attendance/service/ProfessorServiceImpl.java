@@ -1,49 +1,3 @@
-//package com.lms.attendance.service;
-//
-//import com.lms.attendance.model.Professor;
-//import com.lms.attendance.repository.ProfessorMapper;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.List;
-//
-//@Service
-//@RequiredArgsConstructor
-//public class ProfessorServiceImpl implements ProfessorService {
-//
-//    private final ProfessorMapper professorMapper;
-//
-//    @Override
-//    public List<Professor> getAllProfessors() {
-//        return professorMapper.getAllProfessors();
-//    }
-//
-//    @Override
-//    public Professor getProfessorById(String prof_id) {
-//        return professorMapper.getProfessorById(prof_id);
-//    }
-//
-//    @Override
-//    public void saveProfessor(Professor professor) {
-//        // 교수 정보를 저장하기 전에 출력
-//        System.out.println("Professor name: " + professor.getName());
-//        System.out.println("Professor department: " + professor.getDepartment());
-//        System.out.println("Professor email: " + professor.getEmail());
-//        
-//        professorMapper.insertProfessor(professor);
-//    }
-//
-//    @Override
-//    public void updateProfessor(Professor professor) {
-//        professorMapper.updateProfessor(professor);
-//    }
-//
-//    @Override
-//    public void deleteProfessor(String prof_id) {
-//        professorMapper.deleteProfessor(prof_id);
-//    }
-//}
-
 package com.lms.attendance.service;
 
 import com.lms.attendance.model.Professor;
@@ -83,13 +37,16 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Override
     public void updateProfessor(Professor professor) {
-        // 비밀번호 변경 시 암호화
         if (professor.getPassword() != null && !professor.getPassword().isEmpty()) {
-            professor.setPassword(passwordEncoder.encode(professor.getPassword()));
+            // BCrypt 해시들은 보통 "$2a$" 또는 "$2b$"로 시작하므로,
+            // 비밀번호가 이미 암호화되어 있지 않으면 암호화 진행
+            if (!professor.getPassword().startsWith("$2a$") && !professor.getPassword().startsWith("$2b$")) {
+                professor.setPassword(passwordEncoder.encode(professor.getPassword()));
+            }
         }
-
         professorMapper.updateProfessor(professor);
     }
+
 
     @Override
     public void deleteProfessor(String prof_id) {

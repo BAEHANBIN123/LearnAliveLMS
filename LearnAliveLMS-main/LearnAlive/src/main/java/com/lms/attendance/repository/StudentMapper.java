@@ -17,12 +17,22 @@ import com.lms.attendance.model.Student;
 public interface StudentMapper {
 
     // ✅ 학생 등록 (INSERT)
-    @Insert("""
-        INSERT INTO Student (student_id, university, department, name, email, class_id, remarks)
-        VALUES (#{studentId}, #{university}, #{department}, #{name}, #{email}, #{classId}, #{remarks})
-    """)
-    void registerStudent(Student student);
+	@Insert("""
+		    INSERT INTO Student (student_id, university, department, name, phone, email, password)
+		    VALUES (#{studentId}, #{university}, #{department}, #{name}, #{phone}, #{email}, #{password})
+		""")
+		void registerStudent(Student student);
 
+
+
+    // ✅ 학생 로그인
+	@Select("""
+		    SELECT * FROM Student WHERE student_id = #{studentId}
+		""")
+		Student findStudentById(@Param("studentId") String studentId);
+
+	
+	
     // ✅ 특정 강의실에 속한 모든 학생 조회 (SELECT)
     @Select("""
     	    SELECT student_id, university, department, name, email, class_id, remarks

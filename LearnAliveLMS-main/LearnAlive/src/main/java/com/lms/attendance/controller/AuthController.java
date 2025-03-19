@@ -83,25 +83,61 @@
 //평문화된 비밀번호도 로그인 되도록 구현시작 (3.14)
 package com.lms.attendance.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.lms.attendance.model.LoginRequest;
+import com.lms.attendance.model.Student;
 import com.lms.attendance.service.AuthService;
+import com.lms.attendance.service.StudentService;
 
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService authService;
+    private final StudentService studentService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, StudentService studentService) {
         this.authService = authService;
+        this.studentService = studentService;
+    
     }
 
+ // ✅ 학습자(학생) 회원가입
+    @PostMapping("/register/student")
+    public ResponseEntity<?> registerStudent(@RequestBody Student student) {
+    	System.out.println("회원가입 요청 받은 학생 정보: " + student);
+        try {
+            studentService.registerStudent(student);
+            return ResponseEntity.ok(Map.of("success", true, "message", "학생 회원가입 성공!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "학생 회원가입 실패!"));
+        }
+    }
+
+  //학습자 학번 중복확인
+    @PostMapping("/checkStudentId")
+    public ResponseEntity<?> checkStudentId(@RequestBody Map<String, String> request) {
+        String studentId = request.get("studentId");
+        if (studentId == null || studentId.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "학번을 입력하세요."));
+        }
+        // StudentService의 findStudentById 메서드를 사용하여 중복 확인
+        Student existingStudent = studentService.findStudentById(studentId);
+        boolean available = (existingStudent == null);
+        return ResponseEntity.ok(Map.of("available", available));
+    }
+    
+    
+    
     // ✅ 통합 로그인 (학생, 교수, 관리자)
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
@@ -123,7 +159,8 @@ public class AuthController {
                     "success", true,
                     "message", "로그인 성공",
                     "role", role,
-                    "username", roleInKorean
+                    "username", roleInKorean,
+                    "userId", request.getUserId()     // userId 추가
             ));
         }
 
@@ -139,7 +176,7 @@ public class AuthController {
         String name = "ADMIN".equalsIgnoreCase(role) ? null : authService.getUserNameByIdAndRole(request.getUserId(), role);
 
         // 역할 한글 변환
-        String roleInKorean = switch (role.toUpperCase()) {
+        String roleInKorean = switch (role.toLowerCase()) {
             case "ADMIN" -> "관리자";
             case "PROFESSOR" -> "교수자";
             case "STUDENT" -> "학생";
@@ -151,7 +188,8 @@ public class AuthController {
                 "success", true,
                 "message", "로그인 성공",
                 "role", role,
-                "username", name != null ? name + " (" + roleInKorean + ")" : roleInKorean
+                "username", name,
+                "userId", request.getUserId()     // userId 추가
         ));
     }
 }

@@ -37,7 +37,7 @@ public interface MyProfileMapper {
         @Result(property = "phone", column = "phone"),
         @Result(property = "password", column = "password")
     })
-    MyPage findStudentById(@Param("userId") String userId);
+    List<MyPage> findStudentById(@Param("userId") String userId);
 
     @Update("UPDATE Professor SET email = #{email}, phone = #{phone} WHERE prof_id = #{userId}")
     int updateProfessor(@Param("userId") String userId, @Param("email") String email, @Param("phone") String phone);
@@ -45,7 +45,7 @@ public interface MyProfileMapper {
     @Update("UPDATE Student SET email = #{email}, phone = #{phone} WHERE student_id = #{userId}")
     int updateStudent(@Param("userId") String userId, @Param("email") String email, @Param("phone") String phone);
     
- // 비밀번호 업데이트 쿼리 추가
+    // 비밀번호 업데이트 쿼리 추가
     @Update("UPDATE Professor SET password = #{newPassword} WHERE prof_id = #{userId}")
     int updatePassword(@Param("userId") String userId, @Param("newPassword") String newPassword);
     
