@@ -15,8 +15,22 @@ public class MyProfileService {
         this.myProfileMapper = myProfileMapper;
     }
 
+//    public MyPage getUserById(String userId, String role) {
+//        return "professor".equals(role) ? myProfileMapper.findProfessorById(userId) : myProfileMapper.findStudentById(userId);
+//    }
+    
     public MyPage getUserById(String userId, String role) {
-        return "professor".equals(role) ? myProfileMapper.findProfessorById(userId) : myProfileMapper.findStudentById(userId);
+        if ("professor".equals(role)) {
+            MyPage professor = myProfileMapper.findProfessorById(userId);
+            System.out.println("📌 교수 데이터: " + professor); // ✅ 디버깅 로그 추가
+            return professor;
+        } else {
+            List<MyPage> users = myProfileMapper.findStudentById(userId);
+            if (users == null || users.isEmpty()) {
+                throw new RuntimeException("사용자를 찾을 수 없습니다.");
+            }
+            return users.get(0);
+        }
     }
 
     public MyPage updateUser(MyPage myPage) {

@@ -102,5 +102,24 @@ public class AttendanceServiceImpl implements AttendanceService {
         response.put("state", newAttendance.getState());
         return response;
     }
-
+        
+    
+    
+        
+        //명식이꺼
+    public List<Attendance> getAttendanceByStudent(int studentId, String date) {
+        return attendanceMapper.findAttendanceByStudent(studentId, date);
+    }
+    
+    @Override
+    @Transactional
+    public List<Attendance> getMonthlyAttendance(int studentId, String month) {
+        return attendanceMapper.findAttendanceByStudentForMonth(studentId, month);
+    }
+    
+    @Override
+    @Transactional
+    public List<Attendance> getPastAttendance(int studentId, String endDate) {
+        return attendanceMapper.findPastAttendanceByStudent(studentId, endDate);
+    }
 }

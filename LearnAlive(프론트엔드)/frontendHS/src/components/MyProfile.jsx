@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import axios from "axios";
+import { getUserById, updateUser, updatePassword } from "../api/mypageApi";
 
 const MyProfile = () => {
   const { user, setUser } = useAuth();
@@ -14,20 +14,18 @@ const MyProfile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // ✅ user.role이 professor인지 student인지 체크 후 API 호출
+  // ✅ API 호출하여 사용자 데이터 가져오기
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user || !user.userId || !user.role) return;
 
       try {
-        // API 호출
-        const response = await axios.get(`http://localhost:8080/api/mypage/user/${user.userId}/${user.role}`);
-        console.log("User data fetched:", response.data);  // 응답 데이터 확인
-        setUserData(response.data);
+        const data = await getUserById(user.userId, user.role);
+        setUserData(data);
       } catch (error) {
         console.error("마이페이지 데이터 불러오기 실패:", error);
       } finally {
-        setLoading(false);  // 데이터 로딩 완료 후 로딩 상태 변경
+        setLoading(false);
       }
     };
 
@@ -39,7 +37,6 @@ const MyProfile = () => {
     setPhone(userData?.phone || "");
     setShowModal(true);
   };
-
   const closeModal = () => setShowModal(false);
 
   const openPasswordModal = () => {
@@ -47,30 +44,19 @@ const MyProfile = () => {
     setConfirmPassword("");
     setShowPasswordModal(true);
   };
-
   const closePasswordModal = () => setShowPasswordModal(false);
 
-  const updateUser = async ({ email, phone }) => {
+  const handleSave = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/api/mypage/update-user", {
-        email,
-        phone,
-        userId: user.userId,
-        role: user.role
-      });
-
-      setUser(response.data);
-      setUserData(response.data);
+      const updatedUser = await updateUser(user.userId, email, phone);
+      setUser(updatedUser);
+      setUserData(updatedUser);
       alert("내 정보가 변경되었습니다.");
       closeModal();
     } catch (error) {
       console.error("정보 변경 실패:", error);
       alert("정보 변경 중 오류가 발생했습니다.");
     }
-  };
-
-  const handleSave = () => {
-    updateUser({ email, phone });
   };
 
   const handlePasswordChange = async () => {
@@ -80,10 +66,7 @@ const MyProfile = () => {
     }
 
     try {
-      await axios.post("http://localhost:8080/api/mypage/update-password", {
-        userId: user.userId,
-        newPassword
-      });
+      await updatePassword(user.userId, newPassword);
       alert("비밀번호가 변경되었습니다.");
       closePasswordModal();
     } catch (error) {

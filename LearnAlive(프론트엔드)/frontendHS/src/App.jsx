@@ -14,17 +14,26 @@ import BoardPage from "./pages/BoardPage";
 import AddPostPage from "./components/AddPostPage";
 import ProfessorStatus from "./pages/ProfessorStatus";  
 import ManageNotice from "./pages/ManageNotice";  
-import NoticeDetail from "./pages/NoticeDetail";  // ✅ 공지사항 상세 페이지 추가
+import NoticeDetail from "./pages/NoticeDetail";  // 공지사항 상세 페이지
 import MyPage from "./pages/MyPage";
 import MyProfile from "./components/MyProfile";
+import MyPost from "./components/MyPost";
+import MyPostDetail from "./components/MyPostDetail";
+import MyAttendance from "./components/MyAttendance";
+import RegisterStudent from "./components/RegisterStudent";
+import AdminUniversityDepartmentManagement from "./components/AdminUniversityDepartmentManagement";
 
 function TitleUpdater() {
   const location = useLocation();
 
   useEffect(() => {
+    // 기본 경로에 따른 타이틀 설정 및 동적 경로 처리
     switch (location.pathname) {
       case "/":
         document.title = "[고려대학교] 출결관리 시스템";
+        break;
+      case "/register":
+        document.title = "[고려대학교] 회원가입";
         break;
       case "/classroom/:classId":
         document.title = "[고려대학교] 강의실 상세보기";
@@ -53,9 +62,6 @@ function TitleUpdater() {
       case "/notice/manage":
         document.title = "[고려대학교] 공지사항 관리";
         break;
-        case location.pathname.startsWith("/notice/"):  // /notice/:noticeId 패턴에 맞는 경로
-        document.title = "[고려대학교] 공지사항 상세 보기";
-        break;
       case "/mypage":
         document.title = "[고려대학교] 마이페이지";
         break;
@@ -63,7 +69,12 @@ function TitleUpdater() {
         document.title = "[고려대학교] 회원 정보";
         break;
       default:
-        document.title = "[고려대학교] 출결관리 시스템";
+        // /notice/:notice_id 같은 동적 경로 처리
+        if (location.pathname.startsWith("/notice/")) {
+          document.title = "[고려대학교] 공지사항 상세 보기";
+        } else {
+          document.title = "[고려대학교] 출결관리 시스템";
+        }
     }
   }, [location]);
 
@@ -80,6 +91,8 @@ function App() {
           <div className="content-container">
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              {/* 학생 회원가입 페이지 */}
+              <Route path="/register" element={<RegisterStudent />} />
               <Route path="/classroom/:classId/attendance" element={<AttendancePage />} />
               <Route path="/classroom/:classId/manage-attendance" element={<ManageAttendancePage />} />
               <Route path="/classroom/:classId/surveys" element={<SurveyList />} />
@@ -90,10 +103,15 @@ function App() {
               <Route path="/classroom/:classId/settings" element={<ClassSettings />} />
               <Route path="/admin/professors" element={<ProfessorStatus />} />
               <Route path="/notice/manage" element={<ManageNotice />} />
-              <Route path="/notice/:notice_id" element={<NoticeDetail />} />  {/* 공지사항 상세 페이지 경로 추가 */}
+              <Route path="/notice/:notice_id" element={<NoticeDetail />} />
               <Route path="/mypage" element={<MyPage />}>
                 <Route path="/mypage/myprofile" element={<MyProfile />} />
+                <Route path="/mypage/mypost" element={<MyPost />} />
+                <Route path="/mypage/post/:postId" element={<MyPostDetail />} />
+                <Route path="/mypage/myattendance" element={<MyAttendance />} />
               </Route>
+              {/* admin 전용 대학/학과 관리 페이지 */}
+              <Route path="/admin/university" element={<AdminUniversityDepartmentManagement />} />
             </Routes>
           </div>
         </main>

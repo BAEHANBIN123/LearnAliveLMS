@@ -1,5 +1,3 @@
-
-
 package com.lms.attendance.repository;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -14,9 +12,9 @@ public interface AuthMapper {
 
     // ✅ 학생, 교수, 관리자 통합 조회 (역할(role)까지 포함)
     @Select("""
-        SELECT student_id AS userId, name, 'STUDENT' AS role, password FROM Student WHERE student_id = #{userId}
+        SELECT student_id AS userId, name, 'student' AS role, password FROM Student WHERE student_id = #{userId}
         UNION ALL
-        SELECT prof_id AS userId, name, 'PROFESSOR' AS role, password FROM Professor WHERE prof_id = #{userId}
+        SELECT prof_id AS userId, name, 'professor' AS role, password FROM Professor WHERE prof_id = #{userId}
         UNION ALL
         SELECT admin_id AS userId, NULL AS name, 'ADMIN' AS role, password FROM Admin WHERE admin_id = #{userId}
     """)
